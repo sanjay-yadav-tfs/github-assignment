@@ -65,8 +65,6 @@ function UserRegister() {
       }, 3000);
 
     } catch (err) {
-      console.log('Registration error:', err.response?.data); // Debug log
-      
       // Handle validation errors with specific messages
       if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
         const errorMessages = err.response.data.errors.map(error => error.msg).join('. ');

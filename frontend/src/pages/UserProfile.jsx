@@ -24,10 +24,7 @@ function UserProfile() {
     try {
       setLoading(true);
       const response = await usersAPI.getProfile();
-      console.log('Full API Response:', response); // Debug log
-      console.log('Response data:', response.data); // Debug log
       const userData = response.data.user; // Extract user from nested structure
-      console.log('User data:', userData); // Debug log
       setProfile(userData);
       setFormData({
         firstName: userData.firstName,

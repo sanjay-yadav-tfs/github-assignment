@@ -2,35 +2,37 @@
 
 A robust Node.js backend service for managing user onboarding and approval workflows with admin capabilities.
 
-## Features
+## 🎯 Project Overview
+
+This backend service provides a complete user onboarding system with admin approval workflow, built with Node.js, Express.js, and Azure SQL Database. It features JWT authentication, role-based access control, and comprehensive user management capabilities.
+
+## ✨ Features
 
 - 🔐 **JWT Authentication** - Secure token-based authentication
-- 👥 **User Management** - Registration, approval/rejection workflow
+- 👥 **User Management** - Registration, approval/rejection workflow  
 - 🛡️ **Role-Based Access Control** - Admin and User roles
-- 📊 **Queue System** - Background job processing with Bull/Redis
+- 📊 **Azure SQL Database** - Cloud-based database with Sequelize ORM
 - 🔍 **User Search & Filtering** - Advanced search capabilities
-- 📈 **Statistics & Monitoring** - User stats and queue monitoring
-- 🚀 **Production Ready** - Security, logging, rate limiting
-- 🐳 **Docker Support** - Containerized deployment
+-  **Production Ready** - Security, logging, rate limiting
+- ✅ **Testing** - Comprehensive test suite with Jest
 
-## Tech Stack
+## 🛠 Tech Stack
 
-- **Runtime**: Node.js + Express.js
-- **Database**: MSSQL with Sequelize ORM
+- **Runtime**: Node.js 18+ + Express.js
+- **Database**: Azure SQL Database with Sequelize ORM
 - **Authentication**: JWT + bcryptjs
-- **Queue**: Bull (Redis-based)
 - **Validation**: express-validator
 - **Security**: Helmet, CORS, Rate Limiting
 - **Logging**: Winston + Morgan
+- **Testing**: Jest
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ 
-- MSSQL Server or Azure SQL Database
-- Redis Server
-- npm or yarn
+- Node.js 18+
+- Azure SQL Database (or SQL Server)
+- npm
 
 ### Installation
 
@@ -46,9 +48,206 @@ A robust Node.js backend service for managing user onboarding and approval workf
    ```
 
 3. **Environment Configuration**
-   ```bash
-   cp .env.example .env
+   
+   Create a `.env` file in the backend directory with the following variables:
+   
+   ```env
+   # Server Configuration
+   NODE_ENV=development
+   PORT=3000
+   
+   # JWT Configuration
+   JWT_SECRET=your-super-secret-jwt-key-here
+   JWT_EXPIRES_IN=24h
+   
+   # Azure SQL Database Configuration
+   DB_HOST=your-azure-sql-server.database.windows.net
+   DB_PORT=1433
+   DB_NAME=your-database-name
+   DB_USER=your-database-user
+   DB_PASSWORD=your-database-password
+   DB_ENCRYPT=true
+   DB_TRUST_SERVER_CERTIFICATE=false
+   
+   # CORS Configuration
+   FRONTEND_URL=http://localhost:5173
    ```
+
+   **⚠️ Important**: Never commit `.env` files to version control. The `.env` file should contain your actual database credentials and secrets.
+
+4. **Database Setup**
+   
+   The application will automatically:
+   - Test the database connection
+   - Sync database schema
+   - Create an admin user on first run
+   
+   Default admin credentials:
+   - Email: `admin@example.com`
+   - Password: `admin123`
+
+5. **Start the server**
+   ```bash
+   # Development mode
+   npm run dev
+   
+   # Production mode
+   npm start
+   ```
+
+## 📁 Project Structure
+
+```
+backend/
+├── src/
+│   ├── config/          # Database and configuration
+│   ├── controllers/     # Route controllers
+│   ├── models/          # Database models
+│   ├── routes/          # API routes
+│   ├── services/        # Business logic
+│   ├── utils/           # Utilities and middleware
+│   └── workers/         # Background workers
+├── tests/               # Test files
+├── .env.example         # Environment template
+├── .gitignore          # Git ignore rules
+├── package.json        # Dependencies and scripts
+└── README.md           # This file
+```
+
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/admin/login` - Admin login
+- `GET /api/auth/profile` - Get user profile
+
+### User Management (Admin only)
+- `GET /api/users` - Get all users
+- `GET /api/users/pending` - Get pending users
+- `GET /api/users/:id` - Get specific user
+- `PUT /api/users/:id/approve` - Approve user
+- `PUT /api/users/:id/reject` - Reject user
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Delete user
+
+### Health Check
+- `GET /api/health` - Server health status
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+## 🔧 Development
+
+### Available Scripts
+
+- `npm start` - Start production server
+- `npm run dev` - Start development server with nodemon
+- `npm test` - Run test suite
+- `npm run lint` - Run ESLint (if configured)
+
+### Environment Variables
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `NODE_ENV` | Environment mode | No | `development` |
+| `PORT` | Server port | No | `3000` |
+| `JWT_SECRET` | JWT signing secret | Yes | - |
+| `JWT_EXPIRES_IN` | JWT expiration | No | `24h` |
+| `DB_HOST` | Database host | Yes | - |
+| `DB_PORT` | Database port | No | `1433` |
+| `DB_NAME` | Database name | Yes | - |
+| `DB_USER` | Database user | Yes | - |
+| `DB_PASSWORD` | Database password | Yes | - |
+| `FRONTEND_URL` | Frontend URL for CORS | No | `http://localhost:5173` |
+
+## 🔒 Security Features
+
+- **Helmet.js** - Security headers
+- **CORS** - Cross-origin resource sharing
+- **Rate Limiting** - API rate limiting
+- **Input Validation** - Request validation with express-validator
+- **Password Hashing** - bcryptjs for secure password storage
+- **JWT Authentication** - Stateless authentication
+
+## 🏗 Architecture
+
+The backend follows a layered architecture:
+
+1. **Routes** - Handle HTTP requests and responses
+2. **Controllers** - Process requests and coordinate with services
+3. **Services** - Business logic and data processing
+4. **Models** - Database models and relationships
+5. **Utils** - Shared utilities and middleware
+
+## 🚀 Deployment
+
+### Production Checklist
+
+1. Set `NODE_ENV=production`
+2. Configure production database
+3. Set strong JWT secret
+4. Configure HTTPS
+5. Set up monitoring and logging
+6. Configure reverse proxy (nginx)
+
+### Azure Deployment
+
+1. Create Azure SQL Database
+2. Deploy to Azure App Service or Container Instance
+3. Configure environment variables in Azure
+4. Set up SSL/TLS certificates
+
+## 📝 API Documentation
+
+The API follows RESTful conventions:
+
+- **GET** - Retrieve data
+- **POST** - Create new resources
+- **PUT** - Update existing resources
+- **DELETE** - Remove resources
+
+All API responses follow this format:
+
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": { ... }
+}
+```
+
+Error responses:
+
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "errors": [ ... ]
+}
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new features
+5. Ensure all tests pass
+6. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
    
    Edit `.env` with your configuration:
    ```env
