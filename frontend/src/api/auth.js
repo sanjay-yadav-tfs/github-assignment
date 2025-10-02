@@ -21,7 +21,7 @@ export const authAPI = {
 
   // Get user profile
   getProfile: async () => {
-    const response = await api.get('/users/profile');
+    const response = await api.get('/auth/profile');
     return response.data;
   },
 

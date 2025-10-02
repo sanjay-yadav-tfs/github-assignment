@@ -24,13 +24,18 @@ function UserProfile() {
     try {
       setLoading(true);
       const response = await usersAPI.getProfile();
-      setProfile(response.data);
+      console.log('Full API Response:', response); // Debug log
+      console.log('Response data:', response.data); // Debug log
+      const userData = response.data.user; // Extract user from nested structure
+      console.log('User data:', userData); // Debug log
+      setProfile(userData);
       setFormData({
-        firstName: response.data.firstName,
-        lastName: response.data.lastName,
-        email: response.data.email
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email
       });
     } catch (err) {
+      console.error('Profile fetch error:', err);
       setError('Failed to load profile');
     } finally {
       setLoading(false);

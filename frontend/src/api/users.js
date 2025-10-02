@@ -28,6 +28,12 @@ export const usersAPI = {
     return response.data;
   },
 
+  // Get user profile
+  getProfile: async () => {
+    const response = await api.get('/auth/profile');
+    return response.data; // This returns the full response, UserProfile.jsx will access response.data.user
+  },
+
   // Update user profile
   updateProfile: async (userData) => {
     const response = await api.put('/users/profile', userData);

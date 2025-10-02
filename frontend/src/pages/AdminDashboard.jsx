@@ -26,19 +26,23 @@ function AdminDashboard() {
     try {
       setLoading(true);
       setError('');
-      const response = await usersAPI.getAllUsers();
-      setUsers(response.data);
       
-      // Calculate stats
-      const newStats = response.data.reduce((acc, user) => {
-        acc.total++;
-        if (user.status === 'pending') acc.pending++;
-        else if (user.status === 'approved') acc.approved++;
-        else if (user.status === 'rejected') acc.rejected++;
-        return acc;
-      }, { total: 0, pending: 0, approved: 0, rejected: 0 });
+      // Fetch all user data in parallel
+      const [pendingResponse, approvedResponse, statsResponse] = await Promise.all([
+        usersAPI.getPendingUsers(),
+        usersAPI.getApprovedUsers(),
+        usersAPI.getUserStats()
+      ]);
       
-      setStats(newStats);
+      // Combine all users - access the users array from the nested data structure
+      const allUsers = [
+        ...pendingResponse.data.users,
+        ...approvedResponse.data.users
+      ];
+      
+      setUsers(allUsers);
+      setStats(statsResponse.data.stats);
+      
     } catch (err) {
       setError('Failed to fetch users');
       console.error('Error fetching users:', err);
@@ -47,9 +51,9 @@ function AdminDashboard() {
     }
   };
 
-  const handleUserStatusChange = async (userId, newStatus) => {
+  const handleUserStatusChange = async (userId, action, rejectionReason = null) => {
     try {
-      await usersAPI.updateUserStatus(userId, newStatus);
+      await usersAPI.approveRejectUser(userId, action, rejectionReason);
       // Refresh the users list
       await fetchUsers();
     } catch (err) {
@@ -217,7 +221,7 @@ function AdminDashboard() {
         ) : (
           <PendingUsersTable 
             users={filteredUsers} 
-            onStatusChange={handleUserStatusChange}
+            onUserAction={handleUserStatusChange}
             showAllUsers={true}
           />
         )}

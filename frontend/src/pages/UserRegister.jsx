@@ -65,7 +65,15 @@ function UserRegister() {
       }, 3000);
 
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      console.log('Registration error:', err.response?.data); // Debug log
+      
+      // Handle validation errors with specific messages
+      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        const errorMessages = err.response.data.errors.map(error => error.msg).join('. ');
+        setError(errorMessages);
+      } else {
+        setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -187,6 +195,15 @@ function UserRegister() {
             >
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
+          </div>
+          <div className="mt-2 text-xs text-gray-600">
+            <p className="mb-1">Password requirements:</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              <li>At least 6 characters long</li>
+              <li>Contains at least one lowercase letter</li>
+              <li>Contains at least one uppercase letter</li>
+              <li>Contains at least one number</li>
+            </ul>
           </div>
         </div>
 

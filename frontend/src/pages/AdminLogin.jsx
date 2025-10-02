@@ -29,15 +29,18 @@ function AdminLogin() {
     setError('');
 
     try {
-      const response = await authAPI.login(formData);
+      const result = await login(formData, true); // true for isAdmin
       
-      // Check if user is admin
-      if (response.data.user.role !== 'admin') {
-        setError('Access denied. Admin privileges required.');
+      if (!result.success) {
+        setError(result.error);
         return;
       }
 
-      login(response.data.user, response.data.token);
+      // Check if user is admin
+      if (result.user.role !== 'ADMIN') {
+        setError('Access denied. Admin privileges required.');
+        return;
+      }
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
